@@ -1,4 +1,4 @@
-#from random import user_token, comm_token, offset, line
+from random import user_token, comm_token, offset, line
 
 import vk_api
 import requests
