@@ -1,5 +1,5 @@
-group_token = ''
-
+user_token = '' # токен пользователя
+comm_token = '' # токен сообщества
 
 vkinder_db_user = 'vkinder'
 vkinder_db_pass = '123456'
