@@ -1,32 +1,27 @@
-import datetime
-from vk_function import VkInfo
-from vkinder_db import Vkinderdb
+from random import randrange
+
+import vk_api
+from vk_api.longpoll import VkLongPoll, VkEventType
+
+token = input('Token: ')
+
+vk = vk_api.VkApi(token=token)
+longpoll = VkLongPoll(vk)
 
 
-def find_candidate(token, user_id, sex, city, year):
-    """Ищем кандидата по заданным параметрам. Затем идем по  списку ID кандидатов и если такого пользователя нет в
-       базе данных то возвращаем список с id кандидата и названием фотографий"""
-    candidate = VkInfo(token)
-    vkdb = Vkinderdb()
-    vkdb.create_table()
-    candidate_list = candidate.search_users(sex, city, year)
-    photo_list = []
-    for item in candidate_list:
-        if item not in vkdb.get_users(user_id):
-            vkdb.insert_user(user_id, item)
-            photo_list.append(item)
-            photo_list.append(candidate.get_photos(item))
-            return photo_list
-        else:
-            continue
+def write_msg(user_id, message):
+    vk.method('messages.send', {'user_id': user_id, 'message': message,  'random_id': randrange(10 ** 7),})
 
 
-def get_age():
-    age = str(datetime.date.today())[:4]
-    return int(age)
+for event in longpoll.listen():
+    if event.type == VkEventType.MESSAGE_NEW:
 
+        if event.to_me:
+            request = event.text
 
-def get_list_parametrs(token, user_id):
-    user_param = VkInfo(token)
-    parametrs_list = user_param.get_user_info(user_id)
-    return parametrs_list
+            if request == "привет":
+                write_msg(event.user_id, f"Хай, {event.user_id}")
+            elif request == "пока":
+                write_msg(event.user_id, "Пока((")
+            else:
+                write_msg(event.user_id, "Не поняла вашего ответа...")
